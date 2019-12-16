@@ -1,0 +1,31 @@
+{
+  "name": "gulp-convert-css-var",
+  "version": "0.0.1",
+  "description": "convert css variable to refer value, and add it to the top of corresponding css rule.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sklthegoodman/gulp-convert-css-var.git"
+  },
+  "keywords": [
+    "convert",
+    "css",
+    "variable"
+  ],
+  "author": "wrynnsun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sklthegoodman/gulp-convert-css-var/issues"
+  },
+  "homepage": "https://github.com/sklthegoodman/gulp-convert-css-var#readme",
+  "devDependencies": {
+    "css-tree": "^1.0.0-alpha.39",
+    "cssbeautify": "^0.3.1",
+    "event-stream": "^4.0.1",
+    "gulp-util": "^3.0.8",
+    "through2": "^3.0.1"
+  }
+}
