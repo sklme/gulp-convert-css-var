@@ -1,6 +1,6 @@
 {
   "name": "gulp-convert-css-var",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "convert css variable to refer value, and add it to the top of corresponding css rule.",
   "main": "index.js",
   "scripts": {
