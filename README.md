@@ -52,6 +52,13 @@ gulp.task('default', function() {
     --FG-0: rgba(0, 0, 0, .9);
 }
 
+@media (prefers-color-scheme: dark){
+    :root {
+        --BG-0: #191919;
+        --FG-0: rgba(255, 255, 255, 0.8);
+    }
+}
+
 .example {
     margin-top: 20px;
     color: rgba(0, 0, 0, .9);
