@@ -39,6 +39,53 @@ function createRule(property, value, type){
     }
 }
 
+        //检查是否在媒体查询中有dark mode
+        function checkIsDarkRule(ast){
+            let isDark = false
+            
+            if(!ast) return false
+            csstree.walk(ast, (node) => {
+                if(node.type == 'MediaFeature' && node.name == 'prefers-color-scheme' && node.value.name == 'dark'){
+                    isDark = true
+                }
+            })
+            return isDark
+        }
+
+        //检查是否是在body或者root中
+        function checkIsRootTag(ast){
+            let isRoot = false
+            
+            if(!ast) return false
+            csstree.walk(ast, (node, item) => {
+                if(
+                    (node.type == 'TypeSelector' && node.name == 'body') || 
+                    (node.type == 'PseudoClassSelector' && node.name == 'root')
+                ){
+                    isRoot = true
+                }
+            })
+            return isRoot
+        }
+        // 检查是否是单纯的选择器，没有属性选择器之类的。
+        function checkIsSingleRoot(ast){
+            let isSingle = false
+            if(!ast) return false
+            csstree.walk(ast, {
+                enter(node, item){
+                    if(
+                        (node.type == 'TypeSelector' && node.name == 'body') || 
+                        (node.type == 'PseudoClassSelector' && node.name == 'root')
+                    ){
+                        if(!item.prev && !item.next){
+                            isSingle = true 
+                        }
+                    }
+                }
+            })
+            return isSingle
+        }
+
 function gulpProfixer(){
 
     //创建一个 stream 通道，让每个文件通过
@@ -53,32 +100,32 @@ function gulpProfixer(){
         let contents = file.contents.toString()
         let ast = csstree.parse(contents)
 
-        // 生成颜色map
-        csstree.walk(ast, (pnode, item, list) => {
-            // 找到有前缀名的prelude
-            if(pnode.prelude){
-                let pl = pnode.prelude,
-                    pb = pnode.block
+        csstree.walk(ast,{
+            visit:'Declaration',
+            enter(node){
+                //找出变量定义的规则
+                if(
+                    node.property && 
+                    node.property.match(/^--/)
+                ){
+                    let isMediaDark = checkIsDarkRule(this.atrule),
+                        isRootTag = checkIsRootTag(this.rule.prelude),
+                        isSingle = checkIsSingleRoot(this.rule.prelude)
 
-                // 找到:root的规则
-                let isRootFlag = false
-                csstree.walk(pl, (node) => {
-                    if(node.name === 'root' && node.type === 'PseudoClassSelector'){
-                        isRootFlag = true
+
+                    // 是黑暗模式的变量
+                    if(isMediaDark && isRootTag){
+                        colorMap[`${node.property}_dark`]= node.value
+
                     }
-                })
-
-                // 找到:root之后，从:root抽出所有的颜色，制作成一个map
-                if(isRootFlag){
-                    csstree.walk(pb, (node) => {
-                        // 证明是一个颜色定义
-                        if(node.property && node.type === 'Declaration'){
-                            colorMap[node.property]= node.value
-                        }
-                    })
+                    // 是默认模式的变量
+                    else if(!isMediaDark && isSingle){
+                        colorMap[node.property]= node.value
+                    }
                 }
             }
         })
+
 
         // 给所有通过变量赋值的颜色多加一个保底的颜色
         csstree.walk(ast, (pnode, item, list) => {
@@ -101,10 +148,12 @@ function gulpProfixer(){
                             let value = colorMap[varName].value.trim()
                             list.insert(createRule(pnode.property, value), item)
                         }
+
                     }
                 })
             }
         })
+
         
         let css = csstree.generate(ast)
         let bu = Buffer.from(cssbeautify(css,{
