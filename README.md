@@ -27,6 +27,13 @@ gulp.task('default', function() {
 	--FG-0: rgba(0, 0, 0, .9)
 }
 
+@media (prefers-color-scheme: dark){
+    :root {
+            --BG-0: #191919;
+            --FG-0: rgba(255, 255, 255, 0.8);
+    }
+}
+
 .example {
 	margin-top: 20px;
 	color: var(--FG-0);
@@ -41,19 +48,19 @@ gulp.task('default', function() {
 会转化为：
 ```css
 :root {
-  --BG-0: #ededed;
-  --FG-0: rgba(0, 0, 0, .9);
+    --BG-0: #ededed;
+    --FG-0: rgba(0, 0, 0, .9);
 }
 
 .example {
-  margin-top: 20px;
-  color: rgba(0, 0, 0, .9);
-  color: var(--FG-0);
-  background: #ededed;
-  background: var(--BG-0);
+    margin-top: 20px;
+    color: rgba(0, 0, 0, .9);
+    color: var(--FG-0);
+    background: #ededed;
+    background: var(--BG-0);
 }
 
 .example .test {
-  margin: 10px;
+    margin: 10px;
 }
 ```
