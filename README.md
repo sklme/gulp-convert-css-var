@@ -29,8 +29,8 @@ gulp.task('default', function() {
 
 @media (prefers-color-scheme: dark){
     :root {
-            --BG-0: #191919;
-            --FG-0: rgba(255, 255, 255, 0.8);
+        --BG-0: #191919;
+        --FG-0: rgba(255, 255, 255, 0.8);
     }
 }
 
